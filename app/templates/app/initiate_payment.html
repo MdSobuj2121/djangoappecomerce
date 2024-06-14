@@ -1,0 +1,73 @@
+<!-- payments/initiate_payment.html -->
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block title %}Payment Options{% endblock %}
+
+{% block main-content %}
+<style>
+  /* Your existing CSS styles here */
+</style>
+
+<div class="container">
+  <!-- Your existing HTML content here -->
+
+  <div id="bkashDetails" style="display:none;">
+    <!-- ... existing HTML ... -->
+    <input type="text" id="bkashTransactionId">
+    <br><br><button onclick="submitPayment('bkash')">Submit Payment</button>
+    <br><br>
+  </div>
+
+  <div id="nagadhDetails" style="display:none;">
+    <!-- ... existing HTML ... -->
+    <input type="text" id="nagadhTransactionId">
+    <br><br><button onclick="submitPayment('nagadh')">Submit Payment</button>
+    <br><br>
+  </div>
+
+  <div id="cashDetails" style="display:none;">
+    <!-- ... existing HTML ... -->
+    <br><br><button onclick="submitPayment('cash')">Submit Order</button>
+    <br><br>
+  </div>
+</div>
+
+<script>
+  // ... existing JavaScript ...
+
+  function submitPayment(paymentMethod) {
+    var transactionId;
+
+    if (paymentMethod === 'bkash') {
+      transactionId = document.getElementById('bkashTransactionId').value;
+    } else if (paymentMethod === 'nagadh') {
+      transactionId = document.getElementById('nagadhTransactionId').value;
+    }
+
+    fetch('/submit_payment/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'X-CSRFToken': getCookie('csrftoken'),
+      },
+      body: new URLSearchParams({
+        payment_method: paymentMethod,
+        transaction_id: transactionId,
+      }),
+    })
+    .then(response => {
+      if (response.ok) {
+        // Handle success, e.g., show a success message
+        console.log('Payment submitted successfully');
+      } else {
+        // Handle error, e.g., show an error message
+        console.error('Error submitting payment');
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
+  }
+</script>
+{% endblock main-content %}

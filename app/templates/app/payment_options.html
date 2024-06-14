@@ -1,0 +1,130 @@
+<!-- app/templates/app/payment_options.html -->
+
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block title %}Payment Options{% endblock %}
+
+{% block main-content %}
+<style>
+  .container {
+    text-align: center;
+    margin-top: 50px;
+  }
+
+  #paymentMethod {
+    margin-bottom: 20px;
+  }
+
+  #cashDetails img,
+  #bkashDetails img,
+  #nagadhDetails img {
+    max-width: 150px;
+    max-height: 150px;
+    margin-top: 20px;
+  }
+</style>
+
+<div class="container">
+  <h4>Select Payment Method</h4>
+  <hr />
+
+  <div>
+    <label for="paymentMethod">Select Payment Method:</label>
+    <select id="paymentMethod" onchange="showDetails()">
+      <option value="bkash">bKash</option>
+      <option value="nagadh">Nagad</option>
+      <option value="cash">Cash on Delivery</option>
+    </select>
+  </div>
+
+  <div id="bkashDetails" style="display:none;">
+    <img src="https://th.bing.com/th?id=OIP.LDtQw1v2lOae-ZqZyY1rMgHaDR&w=349&h=154&c=8&rs=1&qlt=90&o=6&dpr=1.5&pid=3.1&rm=2" alt="bKash Logo">
+    <br><br>
+    <form id="bkashForm">
+      <p>Pay to bKash number: <strong>01580904708</strong></p>
+      <br><p>Enter bKash Transaction ID:</p>
+      <input type="text" id="bkashTransactionId" name="transaction_id">
+      <br><br>
+      {% csrf_token %}
+      <button type="button" onclick="submitPayment('bkash')">Submit Payment</button>
+    </form>
+    <br><br>
+  </div>
+
+  <div id="nagadhDetails" style="display:none;">
+    <img src="https://th.bing.com/th?id=OIP.LQRIcQG4C3oOW7gCCTjBsgHaDP&w=349&h=153&c=8&rs=1&qlt=90&o=6&dpr=1.5&pid=3.1&rm=2" alt="Nagadh Logo">
+    <br><br>
+    <form id="nagadhForm">
+      <p>Pay to Nagad number: <strong>01580904708</strong></p>
+      <br><p>Enter Nagad Transaction ID:</p>
+      <input type="text" id="nagadhTransactionId" name="transaction_id">
+      <br><br>
+      {% csrf_token %}
+      <button type="button" onclick="submitPayment('nagadh')">Submit Payment</button>
+    </form>
+    <br><br>
+  </div>
+
+  <div id="cashDetails" style="display:none;">
+    <img src="https://th.bing.com/th/id/OIP.J200yiXm351xhrULnyNodQHaEh?w=273&h=180&c=7&r=0&o=5&dpr=1.5&pid=1.7" alt="Cash on Delivery">
+    <br><br>
+    <form id="cashForm">
+      <p>Cash on Delivery. No advance payment required.</p>
+      <p>Transaction ID is not required for Cash on Delivery.</p>
+      <br>
+      {% csrf_token %}
+      <button type="button" onclick="submitPayment('cash')">Submit Order</button>
+    </form>
+    <br><br>
+  </div>
+
+  <div id="transactionDetails" style="display:none;">
+    <h2>Transaction Details</h2>
+    <p id="displayedDetails"></p>
+    <p><strong>Successful Payment!</strong></p>
+  </div>
+</div>
+
+<script>
+  function showDetails() {
+    var paymentMethod = document.getElementById('paymentMethod').value;
+    var bkashDetails = document.getElementById('bkashDetails');
+    var nagadhDetails = document.getElementById('nagadhDetails');
+    var cashDetails = document.getElementById('cashDetails');
+
+    // Hide all details
+    bkashDetails.style.display = 'none';
+    nagadhDetails.style.display = 'none';
+    cashDetails.style.display = 'none';
+
+    // Show details based on the selected payment method
+    if (paymentMethod === 'bkash') {
+      bkashDetails.style.display = 'block';
+    } else if (paymentMethod === 'nagadh') {
+      nagadhDetails.style.display = 'block';
+    } else if (paymentMethod === 'cash') {
+      cashDetails.style.display = 'block';
+    }
+  }
+
+  function submitPayment(paymentMethod) {
+    var transactionId;
+    var form;
+
+    if (paymentMethod === 'bkash') {
+      transactionId = document.getElementById('bkashTransactionId').value;
+      form = document.getElementById('bkashForm');
+    } else if (paymentMethod === 'nagadh') {
+      transactionId = document.getElementById('nagadhTransactionId').value;
+      form = document.getElementById('nagadhForm');
+    } else if (paymentMethod === 'cash') {
+      form = document.getElementById('cashForm');
+    }
+
+    // Simulating a successful payment, update as needed
+    document.getElementById('displayedDetails').innerText = `Payment Method: ${paymentMethod}, Transaction ID: ${transactionId}`;
+    document.getElementById('transactionDetails').style.display = 'block';
+  }
+</script>
+{% endblock main-content %}
